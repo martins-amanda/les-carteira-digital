@@ -95,7 +95,7 @@ const Input = <TFieldValues extends FieldValues>({
         )}
         {password && (
           <Ionicons
-            name={passwordHidden ? 'eye-off' : 'eye'}
+            name={passwordHidden ? 'eye' : 'eye-off'}
             size={20}
             color="black"
             onPress={() => setPasswordHidden(!passwordHidden)}

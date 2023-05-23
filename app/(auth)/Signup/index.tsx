@@ -1,11 +1,130 @@
-import React from 'react';
-import { View, Text } from 'react-native';
+import { Button } from '@components/Button/Button';
+import { ButtonGoBack } from '@components/ButtonGoBack/ButtonGoBack';
+import Input from '@components/Input/Input';
+import { GlobalContainer } from '@global/styles';
+import { theme } from '@global/theme';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { ScrollView, View } from 'react-native';
+import { ButtonOutline } from '@components/ButtonOutline/ButtonOutline';
+import { useRouter } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
+import { Avatar, Container, InputText, Row, Text } from './styles';
 
 const Signup = () => {
+  const router = useRouter();
+
+  const [image, setImage] = useState<string | null>();
+  const { control, handleSubmit } = useForm({
+    // resolver: yupResolver(LoginSchema),
+  });
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    // console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
+  const onSubmit = data => {
+    // console.log('🚀 ~ file: index.tsx:16 ~ data:', data);
+
+    router.push('/Home');
+
+    // setIsVisible(true);
+  };
+
   return (
-    <View>
-      <Text>Signup</Text>
-    </View>
+    <GlobalContainer style={{ justifyContent: 'flex-start' }}>
+      <Row
+        style={{
+          width: '80%',
+          alignSelf: 'flex-start',
+          marginTop: 40,
+        }}
+      >
+        <ButtonGoBack href="/Login" />
+        <Text
+          style={{
+            fontFamily: theme.fonts.medium,
+            fontSize: 24,
+            marginLeft: 70,
+          }}
+        >
+          Cadastro
+        </Text>
+      </Row>
+      <ScrollView>
+        <Container>
+          <Text style={{ marginTop: 30, marginBottom: 40 }}>
+            Efetue seu cadastro e controle suas finanças
+          </Text>
+        </Container>
+
+        {image ? (
+          <Avatar
+            source={{ uri: image }}
+            contentFit="cover"
+            style={{ borderRadius: 100 }}
+          />
+        ) : (
+          <Avatar
+            source="https://static.vecteezy.com/system/resources/previews/005/544/718/original/profile-icon-design-free-vector.jpg"
+            contentFit="contain"
+            style={{ borderRadius: 100 }}
+          />
+        )}
+        <ButtonOutline
+          onPress={pickImage}
+          style={{ alignSelf: 'center', width: 150 }}
+        >
+          Escolher Foto
+        </ButtonOutline>
+        <InputText>Nome</InputText>
+        <Input control={control} name="name" placeholder="Nome" />
+
+        <InputText>E-mail</InputText>
+        <Input control={control} name="email" placeholder="Email" />
+
+        <InputText>Data de nascimento</InputText>
+        <Input
+          control={control}
+          name="birth_date"
+          placeholder="dd/mm/aaaa"
+          type="datetime"
+        />
+
+        <InputText>CPF</InputText>
+        <Input
+          control={control}
+          name="cpf"
+          type="cpf"
+          placeholder="000.000.000-00"
+        />
+
+        <InputText>Senha</InputText>
+        <Input control={control} name="password" password />
+
+        <InputText>Confirmar senha</InputText>
+        <Input control={control} name="confirm_password" password />
+
+        <Button
+          onPress={handleSubmit(onSubmit)}
+          style={{ marginTop: 40, marginBottom: 40 }}
+        >
+          Cadastrar
+        </Button>
+      </ScrollView>
+    </GlobalContainer>
   );
 };
 

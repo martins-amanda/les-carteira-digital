@@ -1,24 +1,7 @@
 import styled from 'styled-components/native';
-import { Image } from 'expo-image';
-
-export const Logo = styled(Image)`
-  width: 100%;
-  height: 200px;
-  margin-bottom: 24px;
-`;
-
-export const LoginContainer = styled.View`
-  flex: 1;
-  justify-content: center;
-  padding: 0px 35px;
-  background-color: ${({ theme }) => theme.colors.background};
-`;
 
 export const WelcomeContainer = styled.View`
-  height: 80px;
-  align-items: center;
-  justify-content: space-between;
-  margin: 20px 0;
+  margin: 20px 0 50px;
 `;
 export const WelcomeText = styled.Text`
   font-size: 16px;

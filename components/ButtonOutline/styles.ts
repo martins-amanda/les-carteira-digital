@@ -6,16 +6,16 @@ export const Container = styled.TouchableOpacity`
   min-height: 45px;
   justify-content: center;
   align-items: center;
-  background-color: ${({ theme }) => theme.colors.primary};
+  background-color: ${({ theme }) => theme.colors.background};
   border-radius: 10px;
   flex-direction: row;
-
+  border: 2px solid ${({ theme }) => theme.colors.border};
   margin-bottom: 12px;
 `;
 
 export const ButtonText = styled.Text`
-  font-size: 18px;
-  color: ${({ theme }) => theme.colors.text_black};
+  font-size: 15px;
+  color: ${({ theme }) => theme.colors.text_light_gray};
 `;
 
 export const Icon = styled(AntDesign)`

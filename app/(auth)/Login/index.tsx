@@ -4,7 +4,17 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { LoginForm } from '@validation/Login.validation';
 import { useRouter } from 'expo-router';
-import { LoginContainer, Logo } from './styles';
+import { TextButton } from '@components/TextButton/TextButton';
+import { theme } from '@global/theme';
+import {
+  InputText,
+  LoginContainer,
+  Logo,
+  Row,
+  SignUpText,
+  WelcomeContainer,
+  WelcomeText,
+} from './styles';
 
 const Login = () => {
   const router = useRouter();
@@ -19,11 +29,43 @@ const Login = () => {
 
   return (
     <LoginContainer>
-      <Logo source="https://picsum.photos/600/200" />
-      <Input control={control} name="email" />
-      <Input control={control} password name="password" />
-      <Button onPress={handleSubmit(onSubmit)}>Entrar</Button>
-      <Button href="/Signup">Cadastre-se</Button>
+      {/* <Logo source="https://picsum.photos/600/200" /> */}
+      <WelcomeContainer>
+        <WelcomeText style={{ fontFamily: theme.fonts.medium, fontSize: 20 }}>
+          Seja bem-vindo!
+        </WelcomeText>
+        <WelcomeText style={{ paddingHorizontal: 15 }}>
+          Faça o login e continue economizando!
+        </WelcomeText>
+      </WelcomeContainer>
+
+      <InputText>E-mail</InputText>
+      <Input control={control} name="email" placeholder="Email" />
+
+      <InputText>Senha</InputText>
+
+      <Input control={control} password name="password" placeholder="Senha" />
+      <TextButton
+        fontSize={12}
+        style={{ alignSelf: 'flex-start', marginTop: 8, marginBottom: 30 }}
+        href="/ForgotPassword"
+      >
+        Esqueci a senha
+      </TextButton>
+
+      <Button
+        onPress={handleSubmit(onSubmit)}
+        style={{ marginTop: 20, marginBottom: 40 }}
+      >
+        Entrar
+      </Button>
+
+      <Row style={{ alignSelf: 'center' }}>
+        <SignUpText>Não tem uma conta? </SignUpText>
+        <TextButton fontSize={12} href="/Signup">
+          Cadastre-se
+        </TextButton>
+      </Row>
     </LoginContainer>
   );
 };

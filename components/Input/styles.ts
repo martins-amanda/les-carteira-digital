@@ -8,7 +8,8 @@ export const InputContainer = styled.View`
   align-items: center;
   padding-left: 4%;
   width: 100%;
-  min-height: 50px;
+  min-height: 45px;
+  border-radius: 10px;
 `;
 
 export const ErrorMessage = styled.Text`

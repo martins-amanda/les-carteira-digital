@@ -1,7 +1,6 @@
 /* eslint-disable react/style-prop-object */
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { useFonts } from 'expo-font';
 import { theme } from '@global/theme';
 import Toast, { ErrorToast } from 'react-native-toast-message';
 import { ThemeProvider } from 'styled-components';
@@ -12,7 +11,13 @@ import { ptBR } from 'date-fns/locale';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { handleError } from '@utils/handleError';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-
+import {
+  useFonts,
+  Inter_600SemiBold,
+  Inter_500Medium,
+  Inter_400Regular,
+  Inter_700Bold,
+} from '@expo-google-fonts/inter';
 import useUpdate from '@hooks/useUpdate';
 
 import { Slot, SplashScreen } from 'expo-router';
@@ -38,8 +43,12 @@ export const queryClient = new QueryClient({
 
 const App = () => {
   const isLoading = useUpdate();
-  const [fontsLoaded] = useFonts({});
-
+  const [fontsLoaded] = useFonts({
+    Inter_600SemiBold,
+    Inter_500Medium,
+    Inter_400Regular,
+    Inter_700Bold,
+  });
   if (!fontsLoaded || isLoading) {
     return <SplashScreen />;
   }

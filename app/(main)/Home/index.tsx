@@ -3,7 +3,8 @@ import Dropdown from '@components/Dropdown/Dropdown';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Text } from 'react-native';
-import { HomeContainer } from './styles';
+import { GlobalContainer } from '@global/styles';
+import { Avatar, HomeContainer, WelcomeContainer, WelcomeText } from './styles';
 
 type FormData = {
   name: string;
@@ -17,38 +18,16 @@ const Home = () => {
   };
 
   return (
-    <HomeContainer>
-      <Text
-        style={{
-          marginBottom: 20,
-        }}
-      >
-        Home
-      </Text>
-      <Dropdown
-        options={[
-          {
-            label: 'Teste',
-            value: 'teste',
-          },
-          {
-            label: 'Teste 2',
-            value: 'teste2',
-          },
-        ]}
-        control={control}
-        name="name"
-      />
-      <Button
-        style={{
-          marginTop: 20,
-          width: '90%',
-        }}
-        onPress={handleSubmit(onSubmit)}
-      >
-        Butão
-      </Button>
-    </HomeContainer>
+    <GlobalContainer>
+      <WelcomeContainer>
+        <Avatar
+          source="https://static.vecteezy.com/system/resources/previews/005/544/718/original/profile-icon-design-free-vector.jpg"
+          contentFit="contain"
+          style={{ borderRadius: 100 }}
+        />
+        <WelcomeText>Olá, Vini Shorts!</WelcomeText>
+      </WelcomeContainer>
+    </GlobalContainer>
   );
 };
 

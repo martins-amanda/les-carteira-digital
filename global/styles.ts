@@ -6,3 +6,10 @@ export const GlobalContainer = styled.View`
   padding: 0px 35px;
   background-color: ${({ theme }) => theme.colors.background};
 `;
+
+export const Divider = styled.View`
+  width: 100%;
+  height: 1px;
+
+  background-color: ${({ theme }) => theme.colors.border_medium_gray};
+`;

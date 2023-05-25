@@ -4,20 +4,34 @@ import Input from '@components/Input/Input';
 import { GlobalContainer } from '@global/styles';
 import { theme } from '@global/theme';
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+
 import { ScrollView, View } from 'react-native';
 import { ButtonOutline } from '@components/ButtonOutline/ButtonOutline';
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
+import { useForm, useFormContext, SubmitHandler } from 'react-hook-form';
+import { Registration } from 'types/Registration';
+import { api } from '@services/api';
+import { handleError, handleSuccess } from '@utils/handleError';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { SignupForm, SignupSchema } from '@validation/AuthLogin.validation';
 import { Avatar, Container, InputText, Row, Text } from './styles';
+
+export interface IExpoImagePicker {
+  assetId: null;
+  base64: null;
+  cancelled: boolean;
+  exif: null;
+  height: number;
+  type: string;
+  uri: string;
+  width: number;
+}
 
 const Signup = () => {
   const router = useRouter();
 
   const [image, setImage] = useState<string | null>();
-  const { control, handleSubmit } = useForm({
-    // resolver: yupResolver(LoginSchema),
-  });
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -31,16 +45,49 @@ const Signup = () => {
     // console.log(result);
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setImage(result.assets?.[0]?.uri);
     }
   };
 
-  const onSubmit = data => {
-    // console.log('🚀 ~ file: index.tsx:16 ~ data:', data);
+  const { control, handleSubmit } = useForm<SignupForm>({
+    resolver: yupResolver(SignupSchema),
+  });
 
-    router.push('/Home');
+  const onSubmit = async (data: SignupForm) => {
+    try {
+      // const formData = new FormData();
 
-    // setIsVisible(true);
+      const body = {
+        name: data.name,
+        email: data.email,
+        birth_date: data.birth_date.toISOString(),
+        password: data.password,
+        cpf: data.cpf,
+        role: 'User',
+      };
+
+      // if (image) {
+      //   const uriParts = image.split('.');
+      //   const fileType = uriParts[uriParts.length - 1];
+
+      //   formData.append(`image`, {
+      //     uri: image,
+      //     name: `avatar.${fileType}`,
+      //     type: `image/${fileType}`,
+      //   } as any);
+      // }
+
+      console.log(JSON.stringify(body, null, 2));
+      await api.post('/user', body);
+      router.push('/Home');
+
+      // navigate('/Login');
+      handleSuccess('Usuário cadastrado com sucesso');
+    } catch (error: any) {
+      console.log(error);
+
+      handleError(error);
+    }
   };
 
   return (
@@ -97,25 +144,25 @@ const Signup = () => {
 
         <InputText>Data de nascimento</InputText>
         <Input
-          control={control}
           name="birth_date"
           placeholder="dd/mm/aaaa"
           type="datetime"
+          control={control}
         />
 
         <InputText>CPF</InputText>
         <Input
-          control={control}
           name="cpf"
           type="cpf"
           placeholder="000.000.000-00"
+          control={control}
         />
 
         <InputText>Senha</InputText>
         <Input control={control} name="password" password />
 
-        <InputText>Confirmar senha</InputText>
-        <Input control={control} name="confirm_password" password />
+        {/* <InputText>Confirmar senha</InputText>
+          <Input control={control} name="confirm_password" password /> */}
 
         <Button
           onPress={handleSubmit(onSubmit)}

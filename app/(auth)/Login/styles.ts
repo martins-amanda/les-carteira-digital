@@ -43,3 +43,9 @@ export const SignUpText = styled.Text`
   font-family: ${({ theme }) => theme.fonts.regular};
   color: ${({ theme }) => theme.colors.text_white};
 `;
+
+export const TextError = styled.Text`
+  font-size: 12px;
+  margin: 10px 5px;
+  color: red;
+`;

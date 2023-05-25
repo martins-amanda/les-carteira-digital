@@ -1,24 +1,37 @@
 import { Button } from '@components/Button/Button';
 import Input from '@components/Input/Input';
+import { handleError, handleSuccess } from '@utils/handleError';
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { theme } from '@global/theme';
+import { RecoverPasswordData } from 'types/RecoverPasswordData';
 import { GlobalContainer } from '@global/styles';
 import { ButtonGoBack } from '@components/ButtonGoBack/ButtonGoBack';
 import { Confirm } from '@components/Confirm/Confirm';
+import { api } from '@services/api';
+import { useRouter } from 'expo-router';
 import { InputText, WelcomeContainer, WelcomeText } from './styles';
 
 const ForgotPassword = () => {
+  const router = useRouter();
   const [isVisible, setIsVisible] = useState(false);
 
-  const { control, handleSubmit } = useForm({
+  const { register, control, handleSubmit } = useForm<RecoverPasswordData>({
     // resolver: yupResolver(LoginSchema),
   });
 
-  const onSubmit = data => {
+  const onSubmit: SubmitHandler<RecoverPasswordData> = async data => {
     // console.log('🚀 ~ file: index.tsx:16 ~ data:', data);
+    try {
+      await api.post('/user/password/forgot', {
+        ...data,
+      });
+      handleSuccess('Verifique seu E-mail');
+    } catch (error: any) {
+      handleError(error?.response?.data?.message || error?.message);
+    }
 
-    setIsVisible(true);
+    // setIsVisible(true);
   };
 
   return (
@@ -36,7 +49,12 @@ const ForgotPassword = () => {
         </WelcomeContainer>
 
         <InputText>E-mail</InputText>
-        <Input control={control} name="email" placeholder="Email" />
+        <Input
+          {...register('email')}
+          control={control}
+          name="email"
+          placeholder="Email"
+        />
 
         <Button
           onPress={handleSubmit(onSubmit)}

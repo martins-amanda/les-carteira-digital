@@ -1,8 +1,8 @@
 export const theme = {
   colors: {
-    background: '#161616',
-    primary: '#FFC300',
-    secondary: '#FF8000',
+    background: '#2d2e2e',
+    primary: '#75bd8d',
+    secondary: '#629e76',
     text_black: '#161616',
 
     text_dark_gray: '#444444',
@@ -19,6 +19,7 @@ export const theme = {
     border_medium_gray: '#707070',
     table_row: '#373636',
     icon: '#929291',
+
     green: '#009C00',
     border: '#444444',
     error: '#FF0000',

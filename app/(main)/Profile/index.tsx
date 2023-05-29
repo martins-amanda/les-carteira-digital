@@ -9,6 +9,7 @@ import { theme } from '@global/theme';
 import { ButtonOutline } from '@components/ButtonOutline/ButtonOutline';
 import Input from '@components/Input/Input';
 import { Button } from '@components/Button/Button';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Avatar, Container, InputText, Row, Text } from './styles';
 
 const Profile = () => {
@@ -46,22 +47,28 @@ const Profile = () => {
     <GlobalContainer style={{ justifyContent: 'flex-start' }}>
       <Row
         style={{
-          width: '80%',
+          width: '100%',
           alignSelf: 'flex-start',
+          justifyContent: 'space-between',
           marginTop: 40,
           marginBottom: 15,
         }}
       >
-        <ButtonGoBack href="/Login" />
         <Text
           style={{
             fontFamily: theme.fonts.medium,
             fontSize: 24,
-            marginLeft: 60,
+            // marginLeft: 60,
           }}
         >
           Perfil
         </Text>
+        <MaterialIcons
+          name="exit-to-app"
+          color={theme.colors.icon}
+          size={24}
+          onPress={() => router.push('/Login')}
+        />
       </Row>
       <ScrollView showsVerticalScrollIndicator={false}>
         {image ? (

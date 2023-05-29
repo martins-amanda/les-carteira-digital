@@ -11,6 +11,7 @@ import {
   TextInputMaskOptionProp,
   TextInputMaskTypeProp,
 } from 'react-native-masked-text';
+import { theme } from '@global/theme';
 import {
   InputContainer,
   ErrorMessage,
@@ -70,7 +71,7 @@ const Input = <TFieldValues extends FieldValues>({
         style={{ ...containerStyle, marginTop, ...shadow.default }}
       >
         {!!iconLeft && (
-          <MaterialIcons name={iconLeft} size={24} color="#2c7d75" />
+          <MaterialIcons name={iconLeft} size={24} color={theme.colors.icon} />
         )}
         {type ? (
           <TextInputMasked

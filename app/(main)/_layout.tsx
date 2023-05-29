@@ -35,6 +35,7 @@ const MainLayout = () => {
           ),
         }}
       />
+
       <Tabs.Screen
         name="Notifications/index"
         options={{
@@ -65,6 +66,13 @@ const MainLayout = () => {
           tabBarIcon: ({ color }) => (
             <FontAwesome name="user" size={30} color={color} />
           ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="History/index"
+        options={{
+          tabBarItemStyle: { display: 'none' },
         }}
       />
     </Tabs>

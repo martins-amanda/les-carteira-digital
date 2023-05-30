@@ -9,17 +9,45 @@ import { theme } from '@global/theme';
 import { ScrollView } from 'react-native';
 import { Button } from '@components/Button/Button';
 import { useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { yupResolver } from '@hookform/resolvers/yup';
+import {
+  Transactions,
+  TransactionsSchema,
+} from '@validation/AuthLogin.validation';
+import { api } from '@services/api';
+import { handleError, handleSuccess } from '@utils/handleError';
+import { number } from 'yup';
 import { Container, InputText, Row, Text } from './styles';
 
 const NewTransaction = () => {
   const { id } = useLocalSearchParams();
 
-  const { control, handleSubmit } = useForm({
-    // resolver: yupResolver(LoginSchema),
+  const { control, handleSubmit } = useForm<Transactions>({
+    resolver: yupResolver(TransactionsSchema),
   });
 
   const [transactionType, setTransactionType] = useState('');
-  const handleTransactionTypeSelect = (type: 'positive' | 'negative') => {
+
+  const onSubmit = async (data: Transactions) => {
+    try {
+      const body = {
+        title: data.title,
+        value: Number(data?.value?.replace(',', '.')),
+        category: data.category,
+        date: data.date.toISOString(),
+        type: transactionType,
+      };
+
+      console.log(JSON.stringify(body, null, 2));
+      await api.post('/transactions', body);
+      handleSuccess('Transação cadastrada com sucesso!');
+    } catch (error: any) {
+      console.log(error);
+      handleError(error);
+    }
+  };
+
+  const handleTransactionTypeSelect = (type: 'Income' | 'Outcome') => {
     setTransactionType(type);
   };
 
@@ -48,31 +76,29 @@ const NewTransaction = () => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <Container>
           <InputText>Nome Transação</InputText>
-          <Input
-            control={control}
-            name="transaction_name"
-            placeholder="Título"
-          />
+          <Input control={control} name="title" placeholder="Título" />
 
           <InputText>Valor da transação</InputText>
           <Input
             control={control}
-            name="transaction_value"
+            name="value"
             placeholder="R$ 15,90"
             type="money"
+            options={{
+              precision: 2,
+              separator: ',',
+              unit: '',
+              suffixUnit: '',
+            }}
           />
 
           <InputText>Categoria da Transação</InputText>
-          <Input
-            control={control}
-            name="transaction_category"
-            placeholder="Ex: Compras"
-          />
+          <Input control={control} name="category" placeholder="Ex: Compras" />
 
           <InputText>Data da transação</InputText>
           <Input
             control={control}
-            name="birth_date"
+            name="date"
             placeholder="dd/mm/aaaa"
             type="datetime"
           />
@@ -85,21 +111,23 @@ const NewTransaction = () => {
             }}
           >
             <TransactionButton
-              onPress={() => handleTransactionTypeSelect('positive')}
+              onPress={() => handleTransactionTypeSelect('Income')}
               type="up"
               title="Entrada"
-              isActive={transactionType === 'positive'}
+              isActive={transactionType === 'Income'}
             />
 
             <TransactionButton
-              onPress={() => handleTransactionTypeSelect('negative')}
+              onPress={() => handleTransactionTypeSelect('Outcome')}
               type="down"
               title="Saída"
-              isActive={transactionType === 'negative'}
+              isActive={transactionType === 'Outcome'}
             />
           </Row>
 
-          <Button> {id ? 'Editar' : 'Salvar'}</Button>
+          <Button onPress={handleSubmit(onSubmit)}>
+            {id ? 'Editar' : 'Salvar'}
+          </Button>
         </Container>
       </ScrollView>
     </GlobalContainer>

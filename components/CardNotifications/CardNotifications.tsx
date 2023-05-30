@@ -2,13 +2,19 @@ import React from 'react';
 
 import { Feather } from '@expo/vector-icons';
 import { theme } from '@global/theme';
+import { format } from 'date-fns';
 import { Column, Container, Money, Row, Text } from './styles';
 
 interface PropsItem {
-  id: string;
-  title: string;
-  desc: string;
-  date: string;
+  id?: string;
+  title?: string;
+  text?: string;
+  read?: boolean;
+  user_id?: string;
+  goal_id?: null;
+  created_at?: Date;
+  updated_at?: Date;
+  desc?: string;
 }
 
 interface Props {
@@ -17,6 +23,10 @@ interface Props {
 }
 
 export const CardNotifications = ({ data, onPressEdit }: Props) => {
+  // Tratar o caso em que created_at é undefined
+  const formattedDate = data.created_at
+    ? format(data.created_at, 'dd/MM/yyyy')
+    : '';
   return (
     <Container>
       <Row style={{ width: '90%', justifyContent: 'space-between' }}>
@@ -31,11 +41,13 @@ export const CardNotifications = ({ data, onPressEdit }: Props) => {
             {data.title}
           </Text>
           <Text style={{ color: theme.colors.text_medium_gray }}>
-            {data.desc}
+            {data.text}
           </Text>
         </Column>
       </Row>
-      <Text style={{ color: theme.colors.text_medium_gray }}>{data.date}</Text>
+      <Text style={{ color: theme.colors.text_medium_gray }}>
+        {formattedDate}
+      </Text>
     </Container>
   );
 };

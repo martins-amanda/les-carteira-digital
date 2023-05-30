@@ -16,6 +16,7 @@ import {
 } from '@validation/AuthLogin.validation';
 import { api } from '@services/api';
 import { handleError, handleSuccess } from '@utils/handleError';
+import { number } from 'yup';
 import { Container, InputText, Row, Text } from './styles';
 
 const NewTransaction = () => {
@@ -31,7 +32,7 @@ const NewTransaction = () => {
     try {
       const body = {
         title: data.title,
-        value: data.value,
+        value: Number(data?.value?.replace(',', '.')),
         category: data.category,
         date: data.date.toISOString(),
         type: transactionType,
@@ -83,6 +84,12 @@ const NewTransaction = () => {
             name="value"
             placeholder="R$ 15,90"
             type="money"
+            options={{
+              precision: 2,
+              separator: ',',
+              unit: '',
+              suffixUnit: '',
+            }}
           />
 
           <InputText>Categoria da Transação</InputText>

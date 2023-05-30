@@ -10,28 +10,29 @@ import { ButtonGoBack } from '@components/ButtonGoBack/ButtonGoBack';
 import { Confirm } from '@components/Confirm/Confirm';
 import { api } from '@services/api';
 import { useRouter } from 'expo-router';
+import { Forgot, ForgotPasswordSchema } from '@validation/AuthLogin.validation';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { InputText, WelcomeContainer, WelcomeText } from './styles';
 
 const ForgotPassword = () => {
   const router = useRouter();
   const [isVisible, setIsVisible] = useState(false);
 
-  const { register, control, handleSubmit } = useForm<RecoverPasswordData>({
-    // resolver: yupResolver(LoginSchema),
+  const { register, control, handleSubmit } = useForm<Forgot>({
+    resolver: yupResolver(ForgotPasswordSchema),
   });
 
-  const onSubmit: SubmitHandler<RecoverPasswordData> = async data => {
+  const onSubmit: SubmitHandler<Forgot> = async data => {
     // console.log('🚀 ~ file: index.tsx:16 ~ data:', data);
     try {
       await api.post('/user/password/forgot', {
         ...data,
       });
-      handleSuccess('Verifique seu E-mail');
     } catch (error: any) {
       handleError(error?.response?.data?.message || error?.message);
     }
 
-    // setIsVisible(true);
+    setIsVisible(true);
   };
 
   return (

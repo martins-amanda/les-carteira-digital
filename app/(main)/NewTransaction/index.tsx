@@ -30,9 +30,17 @@ const NewTransaction = () => {
 
   const onSubmit = async (data: Transactions) => {
     try {
+      let money;
+
+      if (data.value) {
+        money = data.value.replace('.', '');
+        money = money.replace(',', '.');
+        console.log(money);
+      }
+
       const body = {
         title: data.title,
-        value: Number(data?.value?.replace(',', '.')),
+        value: Number(money),
         category: data.category,
         date: data.date.toISOString(),
         type: transactionType,

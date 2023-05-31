@@ -99,8 +99,7 @@ const Login = () => {
         </TextButton>
 
         <Button
-          onPress={() => router.push('/Home')}
-          // onPress={handleSubmit(onSubmit)}
+          onPress={handleSubmit(onSubmit)}
           style={{ marginTop: 20, marginBottom: 40 }}
         >
           Entrar

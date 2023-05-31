@@ -1,6 +1,5 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
-
+import React, { useEffect, useState } from 'react';
 import { Divider, GlobalContainer } from '@global/styles';
 import { theme } from '@global/theme';
 import { ButtonOutline } from '@components/ButtonOutline/ButtonOutline';
@@ -10,6 +9,9 @@ import { useRouter } from 'expo-router';
 import { CardHistory } from '@components/CardHistory/CardHistory';
 import { FlatList } from 'react-native-gesture-handler';
 import { dataHistory } from 'data/dataHistory';
+import { IHistory } from 'types/History';
+import { handleError, handleSuccess } from '@utils/handleError';
+import { api } from '@services/api';
 import {
   Avatar,
   Button,
@@ -34,6 +36,21 @@ const Home = () => {
   const onSubmit = (data: FormData) => {
     console.log(data);
   };
+
+  const [history, setHistory] = useState<IHistory[]>([]);
+  const getHistory = async () => {
+    try {
+      const response = await api.get(`/transactions`);
+      setHistory(response.data.results);
+    } catch (error: any) {
+      console.log(error);
+      handleError(error);
+    }
+  };
+
+  useEffect(() => {
+    getHistory();
+  }, []);
 
   return (
     <GlobalContainer style={{ justifyContent: 'flex-start' }}>
@@ -122,7 +139,7 @@ const Home = () => {
 
         <Divider style={{ marginVertical: 20 }} />
         <FlatList
-          data={dataHistory.slice(0, 3)}
+          data={history}
           keyExtractor={item => item.id}
           renderItem={({ item }) => (
             <View>

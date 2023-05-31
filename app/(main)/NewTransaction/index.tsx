@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { GlobalContainer } from '@global/styles';
 import { TransactionButton } from '@components/TransactionButton/TransactionButton';
@@ -16,16 +16,19 @@ import {
 } from '@validation/AuthLogin.validation';
 import { api } from '@services/api';
 import { handleError, handleSuccess } from '@utils/handleError';
+import { formatDate } from '@utils/format';
 import { Container, InputText, Row, Text } from './styles';
 
 const NewTransaction = () => {
   const { id } = useLocalSearchParams();
-
-  const { control, handleSubmit } = useForm<Transactions>({
+  console.log('ID: ', id);
+  const { control, handleSubmit, reset } = useForm<Transactions>({
     resolver: yupResolver(TransactionsSchema),
   });
 
   const [transactionType, setTransactionType] = useState('');
+
+  const [transactionEdit, setTransactionEdit] = useState<Transactions>();
 
   const onSubmit = async (data: Transactions) => {
     try {
@@ -54,19 +57,70 @@ const NewTransaction = () => {
     }
   };
 
+  const getTransaction = async () => {
+    try {
+      const { data } = await api.get(`/transactions/${id}`);
+      console.log(data);
+      setTransactionEdit(data);
+      // handleSuccess('Editado com Sucesso!');
+    } catch (error: any) {
+      handleError(error);
+    }
+  };
+
+  const onUpdate = async (data: Transactions) => {
+    try {
+      let money;
+
+      if (data.value) {
+        money = data.value.replace('.', '');
+        money = money.replace(',', '.');
+        console.log(money);
+      }
+
+      const body = {
+        title: data.title,
+        value: Number(money),
+        category: data.category,
+        date: data.date.toISOString(),
+        type: transactionType,
+      };
+
+      await api.put(`/transactions/${id}`, body);
+
+      reset();
+      handleSuccess('Editado com Sucesso!');
+    } catch (error: any) {
+      handleError(error);
+    }
+  };
+
   const handleTransactionTypeSelect = (type: 'Income' | 'Outcome') => {
     setTransactionType(type);
   };
 
+  useEffect(() => {
+    if (transactionEdit) {
+      reset({
+        title: transactionEdit.title,
+        value: transactionEdit.value,
+        category: transactionEdit.category,
+        date: formatDate(transactionEdit.date), // formatar data
+        // type: transactionEdit.type,
+      });
+      setTransactionType(transactionEdit.type);
+    }
+  }, [transactionEdit]);
+
   useFocusEffect(
     React.useCallback(() => {
       if (id) {
-        // Post updated, do something with `post`
-        // For example, send the post to the server
+        getTransaction();
       }
     }, [id]),
   );
 
+  console.log('TIPO', transactionEdit?.type);
   return (
     <GlobalContainer style={{ justifyContent: 'flex-start' }}>
       <Text
@@ -132,7 +186,7 @@ const NewTransaction = () => {
             />
           </Row>
 
-          <Button onPress={handleSubmit(onSubmit)}>
+          <Button onPress={handleSubmit(id ? onUpdate : onSubmit)}>
             {id ? 'Editar' : 'Salvar'}
           </Button>
         </Container>

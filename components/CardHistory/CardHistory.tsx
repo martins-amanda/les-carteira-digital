@@ -1,29 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Feather } from '@expo/vector-icons';
 import { theme } from '@global/theme';
+import { IHistory } from 'types/History';
+import { addMinutes, format, parseISO } from 'date-fns';
 import { Column, Container, Money, Row, Text } from './styles';
 
-interface PropsItem {
-  id: string;
-  name: string;
-  category: string;
-  value: string;
-  date: string;
-  type: string;
-}
-
 interface Props {
-  data: PropsItem;
+  data: IHistory;
   onPressEdit?: () => void;
 }
 
 export const CardHistory = ({ data, onPressEdit }: Props) => {
+  const formatDate = (date: string) => {
+    const parsedISODate = parseISO(date);
+
+    return format(
+      addMinutes(parsedISODate, parsedISODate.getTimezoneOffset()),
+      'dd/MM/yyyy',
+    );
+  };
+
   return (
     <Container>
       <Row style={{ width: '70%', justifyContent: 'space-between' }}>
         <Column>
-          <Text style={{ fontFamily: theme.fonts.medium }}>{data.name}</Text>
+          <Text style={{ fontFamily: theme.fonts.medium }}>{data.title}</Text>
           <Text style={{ color: theme.colors.text_medium_gray }}>
             {data.category}
           </Text>
@@ -31,9 +33,9 @@ export const CardHistory = ({ data, onPressEdit }: Props) => {
 
         <Column style={{ alignItems: 'center' }}>
           <Money isDeposit={data?.type === 'entrada'}>
-            {data?.type === 'entrada' ? `${data?.value}` : `- ${data?.value}`}{' '}
+            {data?.type === 'entrada' ? `${data?.value}` : `- ${data?.value}`}
           </Money>
-          <Text>{data.date}</Text>
+          <Text>{formatDate(data.date)}</Text>
         </Column>
       </Row>
       <Feather

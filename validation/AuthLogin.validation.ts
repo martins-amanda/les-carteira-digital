@@ -56,7 +56,7 @@ export type Transactions = Yup.InferType<typeof TransactionsSchema>;
 export const TransactionsSchema = Yup.object({
   title: Yup.string().required('Preencha os campos necessários').trim(),
   value: Yup.string(),
-
+  type: Yup.string(),
   category: Yup.string(),
 
   date: Yup.date()

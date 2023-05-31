@@ -1,25 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView } from 'react-native';
 import { Divider, GlobalContainer } from '@global/styles';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useForm } from 'react-hook-form';
 import { ButtonGoBack } from '@components/ButtonGoBack/ButtonGoBack';
 import { theme } from '@global/theme';
-import Input from '@components/Input/Input';
-import { CardHistory } from '@components/CardHistory/CardHistory';
 import { FlatList } from 'react-native-gesture-handler';
-import { dataHistory } from 'data/dataHistory';
-import { TransactionButton } from '@components/TransactionButton/TransactionButton';
 import { dataGoal } from 'data/dataGoal';
 import { CardGoal } from '@components/CardGoal';
-import { Container, Row, Text, ButtonNewGoal } from './styles';
+import { ButtonOutline } from '@components/ButtonOutline/ButtonOutline';
+import { useRefreshOnFocus } from '@hooks/useRefreshOnFocus';
+import { useQuery } from 'react-query';
+import { api } from '@services/api';
+import { Container, Row, Text } from './styles';
 
 const Goal = () => {
   const router = useRouter();
 
-  const { control, handleSubmit } = useForm({
-    // resolver: yupResolver(LoginSchema),
-  });
+  const { data: goals, refetch } = useQuery(
+    ['goals'],
+    async () => {
+      const res = await api.get(`/goals`, {
+        params: {
+          page: 1,
+          limit: 10,
+          finished: false,
+        },
+      });
+      return res?.data?.results;
+    },
+    {
+      initialData: {},
+    },
+  );
+
+  useRefreshOnFocus(refetch);
 
   return (
     <GlobalContainer style={{ justifyContent: 'flex-start' }}>
@@ -42,10 +57,22 @@ const Goal = () => {
           Minhas Metas
         </Text>
       </Row>
+      <ButtonOutline
+        href="/RegisterGoal"
+        style={{
+          width: 140,
+          height: 30,
+          marginTop: 20,
+          borderRadius: 15,
+          borderColor: theme.colors.secondary,
+        }}
+      >
+        Nova meta
+      </ButtonOutline>
       <ScrollView showsVerticalScrollIndicator={false}>
         <Container>
           <FlatList
-            data={dataGoal}
+            data={goals}
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
               <>

@@ -17,6 +17,7 @@ export const InputText = styled.Text`
   font-family: ${({ theme }) => theme.fonts.regular};
   color: ${({ theme }) => theme.colors.text_white};
   margin-bottom: 8px;
+  margin-top: 20px;
 `;
 
 export const Row = styled.View`

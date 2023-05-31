@@ -55,3 +55,8 @@ export const Row = styled.View`
   flex-direction: row;
   align-items: center;
 `;
+
+export const ContainerButton = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;

@@ -36,7 +36,7 @@ const Profile = () => {
     }
   };
 
-  const onSubmit = data => {
+  const onSubmit = (data: any) => {
     // console.log('🚀 ~ file: index.tsx:16 ~ data:', data);
 
     router.push('/Home');

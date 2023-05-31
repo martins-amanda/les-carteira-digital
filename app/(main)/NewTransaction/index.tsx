@@ -16,10 +16,6 @@ import {
 } from '@validation/AuthLogin.validation';
 import { api } from '@services/api';
 import { handleError, handleSuccess } from '@utils/handleError';
-<<<<<<< HEAD
-import { number } from 'yup';
-=======
->>>>>>> origin/telas
 import { Container, InputText, Row, Text } from './styles';
 
 const NewTransaction = () => {
@@ -33,7 +29,6 @@ const NewTransaction = () => {
 
   const onSubmit = async (data: Transactions) => {
     try {
-<<<<<<< HEAD
       let money;
 
       if (data.value) {
@@ -45,11 +40,6 @@ const NewTransaction = () => {
       const body = {
         title: data.title,
         value: Number(money),
-=======
-      const body = {
-        title: data.title,
-        value: data.value,
->>>>>>> origin/telas
         category: data.category,
         date: data.date.toISOString(),
         type: transactionType,

@@ -33,10 +33,10 @@ const History = () => {
           style={{
             fontFamily: theme.fonts.medium,
             fontSize: 24,
-            marginLeft: 60,
+            marginLeft: 40,
           }}
         >
-          Histórico
+          Minhas transações
         </Text>
       </Row>
       <ScrollView showsVerticalScrollIndicator={false}>

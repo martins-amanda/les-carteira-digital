@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { Divider, GlobalContainer } from '@global/styles';
@@ -6,10 +6,16 @@ import { theme } from '@global/theme';
 import { ButtonOutline } from '@components/ButtonOutline/ButtonOutline';
 import { ScrollView, View } from 'react-native';
 import { TextButton } from '@components/TextButton/TextButton';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { CardHistory } from '@components/CardHistory/CardHistory';
 import { FlatList } from 'react-native-gesture-handler';
 import { dataHistory } from 'data/dataHistory';
+import { Feather } from '@expo/vector-icons';
+import { useQuery } from 'react-query';
+import { api } from '@services/api';
+import { useRefreshOnFocus } from '@hooks/useRefreshOnFocus';
+import { formatCurrency, formatDate } from '@utils/format';
+import { useAuth } from '@hooks/useAuth';
 import {
   Avatar,
   Button,
@@ -28,12 +34,48 @@ type FormData = {
 
 const Home = () => {
   const router = useRouter();
+  const { user } = useAuth();
+  const { id } = user;
 
   const { control, handleSubmit } = useForm<FormData>();
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
+  const [balance, setBalance] = useState<number>(0);
+
+  const { data: goals, refetch } = useQuery(
+    ['goals'],
+    async () => {
+      const res = await api.get(`/goals`, {
+        params: {
+          page: 1,
+          limit: 1,
+          finished: false,
+        },
+      });
+
+      return res?.data?.results;
+    },
+    {
+      initialData: {},
+    },
+  );
+
+  const handleBalance = async () => {
+    const { data } = await api.get(`/user/dashboard`, {
+      user_id: user.id,
+    });
+
+    setBalance(data.balance);
   };
+
+  useRefreshOnFocus(refetch);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (id) {
+        handleBalance();
+      }
+    }, [id]),
+  );
 
   return (
     <GlobalContainer style={{ justifyContent: 'flex-start' }}>
@@ -43,7 +85,7 @@ const Home = () => {
           contentFit="contain"
           style={{ borderRadius: 100 }}
         />
-        <WelcomeText>Olá, Vini Shorts!</WelcomeText>
+        <WelcomeText>{`Olá, ${user.name}`}</WelcomeText>
       </WelcomeContainer>
 
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -56,7 +98,7 @@ const Home = () => {
               marginTop: 15,
             }}
           >
-            R$ 25.500,00
+            {formatCurrency(balance)}
           </Text>
           <Text style={{ fontSize: 12 }}>Última atualização: 12/05/2023</Text>
         </MoneyContent>
@@ -66,36 +108,73 @@ const Home = () => {
 
         <Divider style={{ marginVertical: 20 }} />
 
-        <MoneyContent>
-          <Row style={{ justifyContent: 'space-between' }}>
-            <Row>
-              <Text>Meta: </Text>
-              <Text style={{ fontFamily: theme.fonts.semibold }}>Viagem</Text>
-            </Row>
+        <Row style={{ justifyContent: 'space-between' }}>
+          <Text style={{ fontSize: 18, fontFamily: theme.fonts.medium }}>
+            Metas:{' '}
+          </Text>
+          <TextButton fontSize={16} href="/Goal">
+            ver mais
+          </TextButton>
+        </Row>
+        <Divider style={{ marginVertical: 20 }} />
 
-            <Text style={{ fontSize: 12 }}>até: 12/12/2023</Text>
-          </Row>
+        <FlatList
+          data={goals}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => (
+            <View>
+              <MoneyContent>
+                <Row style={{ justifyContent: 'space-between' }}>
+                  <Row style={{ maxWidth: 180, height: 50, flexWrap: 'wrap' }}>
+                    <Text>Meta atual: </Text>
+                    <Text style={{ fontFamily: theme.fonts.semibold }}>
+                      {item?.title}
+                    </Text>
+                  </Row>
+                  <Text style={{ fontSize: 12 }}>
+                    até: {formatDate(item?.final_date)}
+                  </Text>
+                </Row>
 
-          <Row style={{ marginTop: 10, alignItems: 'center' }}>
-            <Text style={{ fontSize: 20 }}>R$ 9.000,00 </Text>
-            <Text style={{ fontSize: 18, color: theme.colors.secondary }}>
-              de R$ 10.000,00{' '}
-            </Text>
-          </Row>
-        </MoneyContent>
+                <Row
+                  style={{
+                    marginTop: 15,
+                    alignItems: 'center',
+                  }}
+                >
+                  <Text style={{ fontSize: 16 }}>
+                    {formatCurrency(item?.total_raised)}{' '}
+                  </Text>
+                  <Text style={{ fontSize: 16, color: theme.colors.secondary }}>
+                    de {formatCurrency(item.value)}
+                  </Text>
+                </Row>
+              </MoneyContent>
+              <ButtonOutline
+                onPress={() =>
+                  router.push({
+                    pathname: '/UpdateGoal',
+                    params: { id: item.id },
+                  })
+                }
+                style={{
+                  width: 130,
+                  height: 30,
+                  marginTop: 20,
+                  borderRadius: 15,
+                  borderColor: theme.colors.secondary,
+                }}
+              >
+                Atualizar meta
+              </ButtonOutline>
+              <Divider style={{ marginVertical: 20 }} />
+            </View>
+          )}
+          nestedScrollEnabled
+        />
+
         <ContainerButton>
-          <ButtonOutline
-            onPress={() => router.push('/UpdateGoal')}
-            style={{
-              width: 150,
-              marginTop: 20,
-              borderRadius: 15,
-              borderColor: theme.colors.secondary,
-            }}
-          >
-            Atualizar meta
-          </ButtonOutline>
-          <ButtonOutline
+          {/* <ButtonOutline
             onPress={() => router.push('/Goal')}
             style={{
               width: 150,
@@ -105,13 +184,11 @@ const Home = () => {
               marginLeft: 20,
             }}
           >
-            Ver metas
-          </ButtonOutline>
+            Minhas metas
+          </ButtonOutline> */}
         </ContainerButton>
 
-        <Divider style={{ marginVertical: 20 }} />
-
-        <Row style={{ justifyContent: 'space-between' }}>
+        <Row style={{ justifyContent: 'space-between', marginTop: 10 }}>
           <Text style={{ fontSize: 18, fontFamily: theme.fonts.medium }}>
             Seu histórico:{' '}
           </Text>

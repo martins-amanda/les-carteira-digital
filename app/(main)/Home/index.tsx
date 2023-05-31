@@ -19,6 +19,7 @@ import {
   Text,
   WelcomeContainer,
   WelcomeText,
+  ContainerButton,
 } from './styles';
 
 type FormData = {
@@ -82,17 +83,31 @@ const Home = () => {
             </Text>
           </Row>
         </MoneyContent>
-
-        <ButtonOutline
-          style={{
-            width: 150,
-            marginTop: 20,
-            borderRadius: 15,
-            borderColor: theme.colors.secondary,
-          }}
-        >
-          Atualizar meta
-        </ButtonOutline>
+        <ContainerButton>
+          <ButtonOutline
+            onPress={() => router.push('/UpdateGoal')}
+            style={{
+              width: 150,
+              marginTop: 20,
+              borderRadius: 15,
+              borderColor: theme.colors.secondary,
+            }}
+          >
+            Atualizar meta
+          </ButtonOutline>
+          <ButtonOutline
+            onPress={() => router.push('/Goal')}
+            style={{
+              width: 150,
+              marginTop: 20,
+              borderRadius: 15,
+              borderColor: theme.colors.secondary,
+              marginLeft: 20,
+            }}
+          >
+            Ver metas
+          </ButtonOutline>
+        </ContainerButton>
 
         <Divider style={{ marginVertical: 20 }} />
 

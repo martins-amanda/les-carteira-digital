@@ -8,6 +8,7 @@ import { ButtonText, Container } from './styles';
 interface Props {
   onPress?: () => void;
   style?: ViewStyle;
+  styleText?: ViewStyle;
   href?: Href;
 }
 
@@ -21,6 +22,7 @@ export const ButtonOutline = ({
   onPress,
   children,
   style,
+  styleText,
   href,
 }: PropsWithChildren<Props>) => {
   const router = useRouter();
@@ -35,7 +37,7 @@ export const ButtonOutline = ({
 
   return (
     <Container onPress={handlePress} style={style}>
-      <ButtonText>{children}</ButtonText>
+      <ButtonText style={styleText}>{children}</ButtonText>
     </Container>
   );
 };

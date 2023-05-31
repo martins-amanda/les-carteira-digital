@@ -12,7 +12,9 @@ export const Container = styled.View`
   justify-content: space-between;
 `;
 
-export const Column = styled.View``;
+export const Column = styled.View`
+  width: 85%;
+`;
 
 export const Row = styled.View`
   flex-direction: row;

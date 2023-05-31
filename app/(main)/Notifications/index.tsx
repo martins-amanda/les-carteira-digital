@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, Text } from 'react-native';
+import { FlatList } from 'react-native';
 import { Divider, GlobalContainer } from '@global/styles';
-import { dataNotifications } from 'data/dataNotifications';
 import { CardNotifications } from '@components/CardNotifications/CardNotifications';
 import { theme } from '@global/theme';
-import { AntDesign } from '@expo/vector-icons';
 import { INotifications } from 'types/Notifications';
-import { useNavigationState } from '@react-navigation/native';
-import { handleError, handleSuccess } from '@utils/handleError';
+import { handleError } from '@utils/handleError';
 import { api } from '@services/api';
 import { Row, Title } from './styles';
 
@@ -15,13 +12,11 @@ const Notifications = () => {
   const [notifications, setNotifications] = useState<INotifications[]>([]);
   const getNotifications = async () => {
     try {
-      const response = await api.get(`/notifications`, {
-        params: { read: false },
+      const data = await api.get(`/notifications`, {
+        params: { limit: 10, page: 1, read: false },
       });
-      setNotifications(response.data);
-      handleSuccess('teste');
+      setNotifications(data?.data.results);
     } catch (error: any) {
-      console.log(error);
       handleError(error);
     }
   };
@@ -43,8 +38,9 @@ const Notifications = () => {
         >
           Notificações
         </Title>
-        <AntDesign name="pluscircleo" color={theme.colors.primary} size={24} />
+        {/* <AntDesign name="pluscircleo" color={theme.colors.primary} size={24} /> */}
       </Row>
+
       <FlatList
         data={notifications}
         keyExtractor={item => item.id}

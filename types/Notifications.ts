@@ -4,7 +4,7 @@ export interface INotifications {
   text: string;
   read: boolean;
   user_id: string;
-  goal_id: null;
-  created_at: Date;
-  updated_at: Date;
+  goal_id: string;
+  created_at: string;
+  updated_at: string;
 }

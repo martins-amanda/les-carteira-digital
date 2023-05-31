@@ -1,35 +1,28 @@
 import React from 'react';
 
-import { Feather } from '@expo/vector-icons';
 import { theme } from '@global/theme';
-import { format } from 'date-fns';
-import { Column, Container, Money, Row, Text } from './styles';
-
-interface PropsItem {
-  id?: string;
-  title?: string;
-  text?: string;
-  read?: boolean;
-  user_id?: string;
-  goal_id?: null;
-  created_at?: Date;
-  updated_at?: Date;
-  desc?: string;
-}
+import { addMinutes, format, parseISO } from 'date-fns';
+import { INotifications } from 'types/Notifications';
+import { View } from 'react-native';
+import { Column, Container, Row, Text } from './styles';
 
 interface Props {
-  data: PropsItem;
-  onPressEdit?: () => void;
+  data: INotifications;
 }
 
-export const CardNotifications = ({ data, onPressEdit }: Props) => {
-  // Tratar o caso em que created_at é undefined
-  const formattedDate = data.created_at
-    ? format(data.created_at, 'dd/MM/yyyy')
-    : '';
+export const CardNotifications = ({ data }: Props) => {
+  const formatDate = (date: string) => {
+    const parsedISODate = parseISO(date);
+
+    return format(
+      addMinutes(parsedISODate, parsedISODate.getTimezoneOffset()),
+      'dd/MM/yyyy',
+    );
+  };
+
   return (
     <Container>
-      <Row style={{ width: '90%', justifyContent: 'space-between' }}>
+      <Row style={{ width: '80%', justifyContent: 'space-between' }}>
         <Column>
           <Text
             style={{
@@ -45,9 +38,11 @@ export const CardNotifications = ({ data, onPressEdit }: Props) => {
           </Text>
         </Column>
       </Row>
-      <Text style={{ color: theme.colors.text_medium_gray }}>
-        {formattedDate}
-      </Text>
+      <View style={{ width: '30%' }}>
+        <Text style={{ color: theme.colors.text_medium_gray }}>
+          {formatDate(data.created_at)}
+        </Text>
+      </View>
     </Container>
   );
 };

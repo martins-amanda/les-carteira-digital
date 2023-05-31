@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-
+import React, { useEffect, useState } from 'react';
 import { Divider, GlobalContainer } from '@global/styles';
 import { theme } from '@global/theme';
 import { ButtonOutline } from '@components/ButtonOutline/ButtonOutline';
@@ -12,10 +11,13 @@ import { FlatList } from 'react-native-gesture-handler';
 import { dataHistory } from 'data/dataHistory';
 import { Feather } from '@expo/vector-icons';
 import { useQuery } from 'react-query';
-import { api } from '@services/api';
+
 import { useRefreshOnFocus } from '@hooks/useRefreshOnFocus';
 import { formatCurrency, formatDate } from '@utils/format';
 import { useAuth } from '@hooks/useAuth';
+import { IHistory } from 'types/History';
+import { handleError, handleSuccess } from '@utils/handleError';
+import { api } from '@services/api';
 import {
   Avatar,
   Button,
@@ -76,7 +78,31 @@ const Home = () => {
       }
     }, [id]),
   );
+  const [history, setHistory] = useState<IHistory[]>([]);
 
+  const getHistory = async () => {
+    try {
+      const response = await api.get(`/transactions`);
+      setHistory(response.data.results);
+    } catch (error: any) {
+      console.log(error);
+      handleError(error);
+    }
+  };
+
+  useEffect(() => {
+    getHistory();
+  }, []);
+
+  useRefreshOnFocus(refetch);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (id) {
+        handleBalance();
+      }
+    }, [id]),
+  );
   return (
     <GlobalContainer style={{ justifyContent: 'flex-start' }}>
       <WelcomeContainer>
@@ -199,7 +225,7 @@ const Home = () => {
 
         <Divider style={{ marginVertical: 20 }} />
         <FlatList
-          data={dataHistory.slice(0, 3)}
+          data={history}
           keyExtractor={item => item.id}
           renderItem={({ item }) => (
             <View>

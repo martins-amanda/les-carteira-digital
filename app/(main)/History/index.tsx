@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
 import { Divider, GlobalContainer } from '@global/styles';
 import { useRouter } from 'expo-router';
@@ -8,7 +8,9 @@ import { theme } from '@global/theme';
 import Input from '@components/Input/Input';
 import { CardHistory } from '@components/CardHistory/CardHistory';
 import { FlatList } from 'react-native-gesture-handler';
-import { dataHistory } from 'data/dataHistory';
+import { handleError, handleSuccess } from '@utils/handleError';
+import { api } from '@services/api';
+import { IHistory } from 'types/History';
 import { Container, Row, Text } from './styles';
 
 const History = () => {
@@ -17,6 +19,21 @@ const History = () => {
   const { control, handleSubmit } = useForm({
     // resolver: yupResolver(LoginSchema),
   });
+
+  const [history, setHistory] = useState<IHistory[]>([]);
+  const getHistory = async () => {
+    try {
+      const response = await api.get(`/transactions`);
+      setHistory(response.data.results);
+    } catch (error: any) {
+      console.log(error);
+      handleError(error);
+    }
+  };
+
+  useEffect(() => {
+    getHistory();
+  }, []);
 
   return (
     <GlobalContainer style={{ justifyContent: 'flex-start' }}>
@@ -48,7 +65,7 @@ const History = () => {
         />
         <Container>
           <FlatList
-            data={dataHistory}
+            data={history}
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
               <>

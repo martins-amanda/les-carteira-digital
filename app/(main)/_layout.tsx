@@ -75,6 +75,27 @@ const MainLayout = () => {
           tabBarItemStyle: { display: 'none' },
         }}
       />
+
+      <Tabs.Screen
+        name="RegisterGoal/index"
+        options={{
+          tabBarItemStyle: { display: 'none' },
+        }}
+      />
+
+      <Tabs.Screen
+        name="UpdateGoal/index"
+        options={{
+          tabBarItemStyle: { display: 'none' },
+        }}
+      />
+
+      <Tabs.Screen
+        name="Goal/index"
+        options={{
+          tabBarItemStyle: { display: 'none' },
+        }}
+      />
     </Tabs>
   );
 };

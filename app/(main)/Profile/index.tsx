@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ScrollView } from 'react-native';
 import { GlobalContainer } from '@global/styles';
 import * as ImagePicker from 'expo-image-picker';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useForm } from 'react-hook-form';
 import { ButtonGoBack } from '@components/ButtonGoBack/ButtonGoBack';
 import { theme } from '@global/theme';
@@ -10,14 +10,22 @@ import { ButtonOutline } from '@components/ButtonOutline/ButtonOutline';
 import Input from '@components/Input/Input';
 import { Button } from '@components/Button/Button';
 import { MaterialIcons } from '@expo/vector-icons';
+import { yupResolver } from '@hookform/resolvers/yup';
+import {
+  Perfil,
+  PerfilSchema,
+  SignupForm,
+} from '@validation/AuthLogin.validation';
+import { handleError, handleSuccess } from '@utils/handleError';
+import { api } from '@services/api';
 import { Avatar, Container, InputText, Row, Text } from './styles';
 
 const Profile = () => {
   const router = useRouter();
 
   const [image, setImage] = useState<string | null>();
-  const { control, handleSubmit } = useForm({
-    // resolver: yupResolver(LoginSchema),
+  const { control, handleSubmit } = useForm<Perfil>({
+    resolver: yupResolver(PerfilSchema),
   });
 
   const pickImage = async () => {
@@ -35,13 +43,24 @@ const Profile = () => {
       setImage(result.assets[0].uri);
     }
   };
+  const { id } = useLocalSearchParams();
+  const onSubmit = async (data: Perfil) => {
+    try {
+      // const formData = new FormData();
 
-  const onSubmit = (data: any) => {
-    // console.log('🚀 ~ file: index.tsx:16 ~ data:', data);
+      const body = {
+        // name: data.name,
+        new_password: data.new_password,
+        old_password: data.old_password,
+      };
 
-    router.push('/Home');
+      await api.post(`/user/password/change/${id}`, body);
+      handleSuccess('Alterado com sucesso!');
+    } catch (error: any) {
+      console.log(error);
 
-    // setIsVisible(true);
+      handleError(error);
+    }
   };
   return (
     <GlobalContainer style={{ justifyContent: 'flex-start' }}>
@@ -93,30 +112,11 @@ const Profile = () => {
         <InputText>Nome</InputText>
         <Input control={control} name="name" placeholder="Nome" />
 
-        <InputText>E-mail</InputText>
-        <Input control={control} name="email" placeholder="Email" />
-
-        <InputText>Data de nascimento</InputText>
-        <Input
-          control={control}
-          name="birth_date"
-          placeholder="dd/mm/aaaa"
-          type="datetime"
-        />
-
-        <InputText>CPF</InputText>
-        <Input
-          control={control}
-          name="cpf"
-          type="cpf"
-          placeholder="000.000.000-00"
-        />
-
         <InputText>Senha</InputText>
-        <Input control={control} name="password" password />
+        <Input control={control} name="old_password" password />
 
         <InputText>Confirmar senha</InputText>
-        <Input control={control} name="confirm_password" password />
+        <Input control={control} name="new_password" password />
 
         <Button
           onPress={handleSubmit(onSubmit)}

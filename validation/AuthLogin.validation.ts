@@ -110,3 +110,11 @@ export const GoalUpdateSchema = Yup.object({
     .min('01/01/1900', 'Data inválida')
     .required('Data obrigatória'),
 });
+
+export type Perfil = Yup.InferType<typeof PerfilSchema>;
+
+export const PerfilSchema = Yup.object({
+  name: Yup.string(),
+  old_password: Yup.string(),
+  new_password: Yup.string(),
+});

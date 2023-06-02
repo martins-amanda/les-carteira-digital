@@ -51,6 +51,7 @@ const Notifications = () => {
           </>
         )}
         nestedScrollEnabled
+        showsVerticalScrollIndicator={false}
       />
     </GlobalContainer>
   );

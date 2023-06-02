@@ -11,6 +11,10 @@ import {
   VictoryTheme,
 } from 'victory-native';
 import { ScrollView } from 'react-native';
+import { api } from '@services/api';
+import { useAuth } from '@hooks/useAuth';
+import { useRefreshOnFocus } from '@hooks/useRefreshOnFocus';
+import { useQuery } from 'react-query';
 import { Title, Wrapper, WrapperPie } from './styles';
 
 const data = [
@@ -32,6 +36,47 @@ const categories = [
 ];
 
 const Dashboard = () => {
+  const { user } = useAuth();
+  const { id } = user;
+
+  const { data: dashboard, refetch } = useQuery(
+    ['dashboard'],
+    async () => {
+      const res = await api.get(`/user/dashboard`, {
+        params: {
+          user_id: id.toString(),
+        },
+      });
+
+      return res?.data.transactions;
+    },
+    {
+      initialData: {},
+    },
+  );
+  console.log(JSON.stringify(dashboard, null, 2));
+  // const handleDashboard = async () => {
+  //   const { data } = await api.get(`/user/dashboard`, {
+  //     user_id: user.id.toString(),
+  //   });
+
+  //   setBalance(data.balance);
+  // };
+
+  // console.log('Filtro', filteredDashboard);
+
+  useRefreshOnFocus(refetch);
+
+  const filteredDashboard = dashboard.filter(
+    (transaction: { type: string }) => transaction.type === 'Income',
+  );
+  console.log('FILTRO', JSON.stringify(filteredDashboard, null, 2));
+
+  let totalIncome = 0;
+  filteredDashboard.forEach(item => {
+    totalIncome += item.value;
+  });
+  console.log('total', totalIncome);
   return (
     <GlobalContainer>
       <ScrollView showsVerticalScrollIndicator={false}>

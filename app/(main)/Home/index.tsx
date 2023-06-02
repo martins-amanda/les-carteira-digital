@@ -63,7 +63,7 @@ const Home = () => {
 
   const handleBalance = async () => {
     const { data } = await api.get(`/user/dashboard`, {
-      user_id: user.id,
+      user_id: id.toString(),
     });
 
     setBalance(data.balance);
@@ -71,13 +71,6 @@ const Home = () => {
 
   useRefreshOnFocus(refetch);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      if (id) {
-        handleBalance();
-      }
-    }, [id]),
-  );
   const [history, setHistory] = useState<IHistory[]>([]);
 
   const getHistory = async () => {
@@ -93,8 +86,6 @@ const Home = () => {
   useEffect(() => {
     getHistory();
   }, []);
-
-  useRefreshOnFocus(refetch);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -225,7 +216,7 @@ const Home = () => {
 
         <Divider style={{ marginVertical: 20 }} />
         <FlatList
-          data={history}
+          data={history.slice(0, 3)}
           keyExtractor={item => item.id}
           renderItem={({ item }) => (
             <View>
